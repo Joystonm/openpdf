@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "sh scripts/patch-next-bin.sh"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",
