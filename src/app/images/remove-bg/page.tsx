@@ -83,11 +83,7 @@ export default function RemoveBgPage() {
                 </button>
               </div>
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
-<<<<<<< HEAD
-                ⚡ Uses the <strong>isnet_fp16</strong> model (~40 MB, first run downloads and caches it).
-=======
                 Uses the <strong>isnet_fp16</strong> model (optimized for speed and quality). First run downloads and caches it.
->>>>>>> 6467687782bec0aafac354d37def3215e9df780e
               </div>
               <button onClick={process} className="w-full gradient-coral text-white font-semibold py-3.5 rounded-xl shadow-warm hover:shadow-warm-lg hover:scale-[1.01] transition-all">
                 Remove Background

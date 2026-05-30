@@ -18,6 +18,8 @@ npm install
 npm run dev
 ```
 
+> Uses `--webpack` flag. Next.js 16 defaults to Turbopack, but Bolt's Linux/x64 environment does not have the required native Turbopack bindings. Webpack is used for both `dev` and `build`.
+
 Open [http://localhost:3000](http://localhost:3000).
 
 ### 3. Build for production
@@ -55,10 +57,10 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
 
 ## Troubleshooting
 
-### `ReferenceError: __dirname is not defined in ES module scope`
+### `Turbopack is not supported on this platform (linux/x64)`
 
-**Cause:** `next.config.ts` used `__dirname` which is not available in ESM.  
-**Fix:** Already resolved — `next.config.ts` no longer uses `__dirname`.
+**Cause:** Next.js 16 defaults to Turbopack, which requires native binaries not available in Bolt's Linux environment.  
+**Fix:** Already resolved — both `dev` and `build` scripts use `--webpack`.
 
 ### Turbopack workspace root warning
 
