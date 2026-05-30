@@ -1,9 +1,10 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap");
 
 @theme {
   /* Fonts */
-  --font-serif: var(--font-playfair), Georgia, serif;
-  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 
   /* Coral palette */
   --color-coral-50: #fdf4f0;

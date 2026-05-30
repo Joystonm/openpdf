@@ -14,7 +14,8 @@ export default function CompressionStats({
   compressedSize,
   processingTime,
 }: CompressionStatsProps) {
-  const reduction = Math.round(((originalSize - compressedSize) / originalSize) * 100);
+  const saved = originalSize - compressedSize;
+  const reduction = originalSize > 0 ? Math.round((saved / originalSize) * 100) : 0;
 
   return (
     <motion.div
@@ -49,7 +50,7 @@ export default function CompressionStats({
             <motion.div
               className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full"
               initial={{ width: "100%" }}
-              animate={{ width: `${100 - reduction}%` }}
+              animate={{ width: `${Math.min(100, Math.max(0, 100 - reduction))}%` }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             />
           </div>
@@ -62,7 +63,7 @@ export default function CompressionStats({
           <p className="text-xs text-warm-500">size reduction</p>
         </div>
         <div className="text-center">
-          <p className="text-2xl font-bold text-warm-800">{formatBytes(originalSize - compressedSize)}</p>
+          <p className="text-2xl font-bold text-warm-800">{saved > 0 ? formatBytes(saved) : "0 B"}</p>
           <p className="text-xs text-warm-500">saved</p>
         </div>
         {processingTime && (
