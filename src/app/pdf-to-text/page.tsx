@@ -29,8 +29,11 @@ export default function PdfToTextPage() {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
         const pageText = content.items
-          .filter((item): item is { str: string; hasEOL: boolean } => "str" in item)
-          .map((item) => item.str + (item.hasEOL ? "\n" : " "))
+          .filter((item) => "str" in item && typeof item.str === "string")
+          .map((item) => {
+            const textItem = item as { str: string; hasEOL?: boolean };
+            return textItem.str + (textItem.hasEOL ? "\n" : " ");
+          })
           .join("");
         parts.push(`--- Page ${i} ---\n${pageText}`);
       }

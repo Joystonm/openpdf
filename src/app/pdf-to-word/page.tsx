@@ -33,7 +33,7 @@ export default function PdfToWordPage() {
       const buf = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
       const totalPages = pdf.numPages;
-      const docChildren: Paragraph[] = [];
+      const docChildren: InstanceType<typeof Paragraph>[] = [];
 
       for (let i = 1; i <= totalPages; i++) {
         const page = await pdf.getPage(i);
