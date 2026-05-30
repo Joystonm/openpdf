@@ -11,9 +11,9 @@ import { formatBytes, pdfBlob } from "@/lib/utils";
 type Quality = "high" | "balanced" | "small";
 
 const qualityOptions: { value: Quality; label: string; desc: string; scale: number; jpeg: number }[] = [
-  { value: "high",     label: "High Quality",  desc: "Minimal compression, best fidelity",  scale: 1.5, jpeg: 0.85 },
-  { value: "balanced", label: "Balanced",       desc: "Good quality, significant savings",   scale: 1.2, jpeg: 0.65 },
-  { value: "small",    label: "Smallest Size",  desc: "Maximum compression",                 scale: 0.9, jpeg: 0.40 },
+  { value: "high",     label: "High Quality",  desc: "Minimal compression, best fidelity",  scale: 1.0, jpeg: 0.85 },
+  { value: "balanced", label: "Balanced",       desc: "Good quality, significant savings",   scale: 0.8, jpeg: 0.65 },
+  { value: "small",    label: "Smallest Size",  desc: "Maximum compression",                 scale: 0.6, jpeg: 0.40 },
 ];
 
 type State =
@@ -57,8 +57,9 @@ export default function CompressPage() {
         const canvas = document.createElement("canvas");
         canvas.width = Math.round(viewport.width);
         canvas.height = Math.round(viewport.height);
+        const canvasContext = canvas.getContext("2d")!;
 
-        await page.render({ canvas, viewport }).promise;
+        await page.render({ canvasContext, viewport }).promise;
 
         // Convert to JPEG blob at target quality
         const jpegDataUrl = canvas.toDataURL("image/jpeg", opt.jpeg);
