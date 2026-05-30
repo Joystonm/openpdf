@@ -32,7 +32,7 @@ export default function RemoveBgPage() {
       const { removeBackground } = await import("@imgly/background-removal");
 
       setStatusMsg("Removing background…");
-      const blob = await removeBackground(file, { model: "small" });
+      const blob = await removeBackground(file, { model: "isnet_fp16" });
       setResultUrl(URL.createObjectURL(blob));
       setStatus("done");
     } catch (e) {
@@ -83,7 +83,7 @@ export default function RemoveBgPage() {
                 </button>
               </div>
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
-                ⚡ Uses the <strong>small</strong> model (~5 MB, fast). First run downloads and caches it.
+                ⚡ Uses the <strong>isnet_fp16</strong> model (~40 MB, first run downloads and caches it).
               </div>
               <button onClick={process} className="w-full gradient-coral text-white font-semibold py-3.5 rounded-xl shadow-warm hover:shadow-warm-lg hover:scale-[1.01] transition-all">
                 Remove Background

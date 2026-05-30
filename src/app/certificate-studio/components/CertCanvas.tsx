@@ -56,7 +56,12 @@ export default function CertCanvas({
   }, [builtIn, bgLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!background) { bgImgRef.current = null; setBgLoaded((n) => n + 1); return; }
+    if (!background) {
+      bgImgRef.current = null;
+      // Use setTimeout to avoid synchronous setState in effect
+      const t = setTimeout(() => setBgLoaded((n) => n + 1), 0);
+      return () => clearTimeout(t);
+    }
     const img = new Image();
     img.onload = () => { bgImgRef.current = img; setBgLoaded((n) => n + 1); };
     img.src = background;

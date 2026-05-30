@@ -42,7 +42,6 @@ const groups = [
   {
     category: "Security",
     items: [
-      { name: "Protect / Unlock PDF", desc: "Add or remove password protection", href: "/protect", icon: "🔒", accent: "warm" },
       { name: "Watermark PDF", desc: "Add text or image watermarks", href: "/watermark", icon: "💧", accent: "warm" },
     ],
   },

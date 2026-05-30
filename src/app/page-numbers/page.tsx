@@ -49,7 +49,7 @@ export default function AddPageNumbersPage() {
       const w = mediaBox.width;
       const h = mediaBox.height;
 
-      let x: number, y: number;
+      let x: number;
 
       if (position.includes("center")) {
         x = (w - textWidth) / 2;
@@ -59,7 +59,7 @@ export default function AddPageNumbersPage() {
         x = margin;
       }
 
-      y = position.startsWith("top") ? h - margin - textHeight : margin;
+      const y = position.startsWith("top") ? h - margin - textHeight : margin;
 
       page.drawText(text, { x, y, size: fontSize, font, color: rgb(0.25, 0.25, 0.25) });
     });

@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import type { CertField, CertTemplate, FieldType, BuiltInTemplate } from "./types";
+import type { CertField, CertTemplate, FieldType } from "./types";
 import { BUILT_IN_TEMPLATES } from "./templates";
 import { CANVAS_W, CANVAS_H, drawField } from "./renderer";
 import TemplateSource from "./components/TemplateSource";

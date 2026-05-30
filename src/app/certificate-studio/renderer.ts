@@ -129,7 +129,7 @@ export function drawField(
   }
 
   // Text field
-  let displayText = value || `[ ${field.label} ]`;
+  const displayText = value || `[ ${field.label} ]`;
   let fs = field.fontSize;
 
   if (field.autoFit) {

@@ -40,8 +40,8 @@ export default function PdfWordCountPage() {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
         const text = content.items
-          .filter((item): item is { str: string } => "str" in item)
-          .map((item) => item.str)
+          .filter((item) => "str" in item)
+          .map((item) => (item as { str: string }).str)
           .join(" ");
         const words = text.trim() ? text.trim().split(/\s+/).length : 0;
         const chars = text.length;

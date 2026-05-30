@@ -24,7 +24,7 @@ export default function PdfToWordPage() {
     setStatus("processing"); setProgress(10);
 
     try {
-      const [pdfjsLib, { Document, Paragraph, TextRun, HeadingLevel, Packer }] = await Promise.all([
+      const [pdfjsLib, { Document, Paragraph, TextRun, Packer }] = await Promise.all([
         import("pdfjs-dist"),
         import("docx"),
       ]);
@@ -33,7 +33,7 @@ export default function PdfToWordPage() {
       const buf = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
       const totalPages = pdf.numPages;
-      const docChildren: Paragraph[] = [];
+      const docChildren: InstanceType<typeof Paragraph>[] = [];
 
       for (let i = 1; i <= totalPages; i++) {
         const page = await pdf.getPage(i);
