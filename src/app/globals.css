@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  /* Fonts */
+  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  /* Coral palette */
+  --color-coral-50: #fdf4f0;
+  --color-coral-100: #fbe5db;
+  --color-coral-200: #f7ccba;
+  --color-coral-300: #f0a98e;
+  --color-coral-400: #e67d5a;
+  --color-coral-500: #cc785c;
+  --color-coral-600: #b5603f;
+  --color-coral-700: #964d32;
+  --color-coral-800: #7a3f2b;
+  --color-coral-900: #643527;
+
+  /* Cream palette */
+  --color-cream-50: #fdfcf8;
+  --color-cream-100: #faf7f0;
+  --color-cream-200: #f5efe3;
+  --color-cream-300: #ede3d0;
+  --color-cream-400: #dfd0b8;
+  --color-cream-500: #cdb99a;
+
+  /* Warm dark palette */
+  --color-warm-900: #1a1714;
+  --color-warm-800: #242018;
+  --color-warm-700: #2e2a22;
+  --color-warm-600: #3d3830;
+  --color-warm-500: #524d44;
+  --color-warm-400: #6b6459;
+
+  /* Animations */
+  --animate-pulse-slow: pulse 3s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-fade-up: fadeUp 0.5s ease forwards;
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+  }
+}
+
+/* Base resets */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+::selection { background: #cc785c33; color: #1a1714; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #faf7f0; }
+::-webkit-scrollbar-thumb { background: #dfd0b8; border-radius: 3px; }
+
+/* Custom utilities */
+.gradient-coral {
+  background: linear-gradient(135deg, #cc785c 0%, #b5603f 100%);
+}
+
+.noise-bg {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.shadow-warm {
+  box-shadow: 0 4px 24px rgba(26, 23, 20, 0.08), 0 1px 4px rgba(26, 23, 20, 0.04);
+}
+
+.shadow-warm-lg {
+  box-shadow: 0 8px 48px rgba(26, 23, 20, 0.12), 0 2px 8px rgba(26, 23, 20, 0.06);
+}
+
+/* border-warm = cream-300 (#ede3d0) used as a named border color shorthand */
+.border-warm {
+  border-color: #ede3d0;
+}
