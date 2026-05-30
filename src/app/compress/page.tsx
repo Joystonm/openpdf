@@ -10,10 +10,10 @@ import { formatBytes, pdfBlob } from "@/lib/utils";
 
 type Quality = "high" | "balanced" | "small";
 
-const qualityOptions: { value: Quality; label: string; desc: string; scale: number; jpeg: number }[] = [
-  { value: "high",     label: "High Quality",  desc: "Minimal compression, best fidelity",  scale: 1.0, jpeg: 0.85 },
-  { value: "balanced", label: "Balanced",       desc: "Good quality, significant savings",   scale: 0.8, jpeg: 0.65 },
-  { value: "small",    label: "Smallest Size",  desc: "Maximum compression",                 scale: 0.6, jpeg: 0.40 },
+const qualityOptions: { value: Quality; label: string; desc: string; jpeg: number }[] = [
+  { value: "high",     label: "High Quality",  desc: "Minimal compression, best fidelity",  jpeg: 0.85 },
+  { value: "balanced", label: "Balanced",       desc: "Good quality, significant savings",   jpeg: 0.65 },
+  { value: "small",    label: "Smallest Size",  desc: "Maximum compression",                 jpeg: 0.35 },
 ];
 
 type State =
@@ -36,50 +36,72 @@ export default function CompressPage() {
     const start = Date.now();
     const opt = qualityOptions.find((o) => o.value === quality)!;
 
-    setState({ status: "processing", file, progress: 0 });
+    setState({ status: "processing", file, progress: 10 });
 
     try {
-      // Load pdfjs with local worker
-      const pdfjsLib = await import("pdfjs-dist");
-      pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
-
       const buf = await file.arrayBuffer();
-      const pdfJs = await pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
-      const totalPages = pdfJs.numPages;
+      setState((s) => s.status === "processing" ? { ...s, progress: 30 } : s);
 
-      // New pdf-lib document to receive re-rendered pages
-      const outDoc = await PDFDocument.create();
+      // Load and re-save with object streams (compresses xref + metadata)
+      const pdfDoc = await PDFDocument.load(buf, { ignoreEncryption: true });
+      setState((s) => s.status === "processing" ? { ...s, progress: 50 } : s);
 
-      for (let i = 1; i <= totalPages; i++) {
-        const page = await pdfJs.getPage(i);
-        const viewport = page.getViewport({ scale: opt.scale });
+      // Remove metadata to save space
+      pdfDoc.setTitle("");
+      pdfDoc.setAuthor("");
+      pdfDoc.setSubject("");
+      pdfDoc.setKeywords([]);
+      pdfDoc.setProducer("");
+      pdfDoc.setCreator("");
 
-        const canvas = document.createElement("canvas");
-        canvas.width = Math.round(viewport.width);
-        canvas.height = Math.round(viewport.height);
-        const canvasContext = canvas.getContext("2d")!;
+      setState((s) => s.status === "processing" ? { ...s, progress: 70 } : s);
 
-        await page.render({ canvasContext, viewport }).promise;
+      // Re-render pages as JPEG only for balanced/small to actually shrink image data
+      if (quality !== "high") {
+        const pdfjsLib = await import("pdfjs-dist");
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
-        // Convert to JPEG blob at target quality
-        const jpegDataUrl = canvas.toDataURL("image/jpeg", opt.jpeg);
-        const base64 = jpegDataUrl.split(",")[1];
-        const jpegBytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+        const pdfJs = await pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
+        const totalPages = pdfJs.numPages;
+        const outDoc = await PDFDocument.create();
 
-        const img = await outDoc.embedJpg(jpegBytes);
-        // Use original page dimensions (points) not pixel dimensions
-        const origViewport = page.getViewport({ scale: 1 });
-        const pdfPage = outDoc.addPage([origViewport.width, origViewport.height]);
-        pdfPage.drawImage(img, { x: 0, y: 0, width: origViewport.width, height: origViewport.height });
+        for (let i = 1; i <= totalPages; i++) {
+          const page = await pdfJs.getPage(i);
+          const origViewport = page.getViewport({ scale: 1 });
 
-        setState((s) =>
-          s.status === "processing"
-            ? { ...s, progress: Math.round((i / totalPages) * 90) }
-            : s
-        );
+          // Render at reduced resolution
+          const scale = quality === "small" ? 0.7 : 0.9;
+          const viewport = page.getViewport({ scale });
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.round(viewport.width);
+          canvas.height = Math.round(viewport.height);
+          const canvasContext = canvas.getContext("2d")!;
+          await page.render({ canvasContext, viewport }).promise;
+
+          const blob: Blob = await new Promise((res) =>
+            canvas.toBlob((b) => res(b!), "image/jpeg", opt.jpeg)
+          );
+          const jpegBytes = new Uint8Array(await blob.arrayBuffer());
+
+          const img = await outDoc.embedJpg(jpegBytes);
+          const pdfPage = outDoc.addPage([origViewport.width, origViewport.height]);
+          pdfPage.drawImage(img, { x: 0, y: 0, width: origViewport.width, height: origViewport.height });
+
+          setState((s) =>
+            s.status === "processing"
+              ? { ...s, progress: 70 + Math.round((i / totalPages) * 25) }
+              : s
+          );
+        }
+
+        const compressed = await outDoc.save({ useObjectStreams: true });
+        const time = (Date.now() - start) / 1000;
+        setState({ status: "done", file, result: compressed, time });
+        return;
       }
 
-      const compressed = await outDoc.save();
+      // High quality: just re-save with object streams
+      const compressed = await pdfDoc.save({ useObjectStreams: true });
       const time = (Date.now() - start) / 1000;
       setState({ status: "done", file, result: compressed, time });
     } catch (e) {
