@@ -75,8 +75,7 @@ export default function CompressPage() {
           const canvas = document.createElement("canvas");
           canvas.width = Math.round(viewport.width);
           canvas.height = Math.round(viewport.height);
-          const canvasContext = canvas.getContext("2d")!;
-          await page.render({ canvasContext, viewport }).promise;
+          await page.render({ canvas, viewport }).promise;
 
           const blob: Blob = await new Promise((res) =>
             canvas.toBlob((b) => res(b!), "image/jpeg", opt.jpeg)
